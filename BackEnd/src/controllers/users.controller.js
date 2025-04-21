@@ -1,11 +1,12 @@
-import { createHash, isValidPassword } from '../../utils.js'
+import { createHash, isValidPassword, generateToken } from '../../utils.js'
 import usersModel from '../dao/users.model.js'
 
 async function register(req, res) {
     const { email, name, alias, password } = req.body;
+    if ( !email || !name || !alias || !password) return res.status(400).send({status: "error", error: "Email, name, alias and password are required for register"});
     try {
         const exist = await usersModel.findOne({ $or: [{ email }, { alias }] });
-        if(exist) return res.status(400).send({ status: "error", error: "There is an user already registered with that email or alias"});
+        if(exist) return res.status(400).send({ status: "error", error: "There is an user already registered with that email or alias."});
         const newUser = {
             email,
             name,
@@ -16,26 +17,40 @@ async function register(req, res) {
         let result = await usersModel.create(newUser);
         return res.status(200).send({ status: "success", message: "User created successfully", payload: result });
     } catch (error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error',error: error.message});
     }
 }
 
 async function login(req, res) {
     const { email, password } = req.body;
-    if ( !email || !password) return res.status(400).send({status: "error", error: "Email and password are required for login"});
+    if (!email || !password) {
+        return res.status(400).send({ status: "error", error: "Email and password are required for login" });
+    }
+
     try {
         const user = await usersModel.findOne({ email });
         if (!user) {
             return res.status(400).send({ status: 'error', error: 'No user found with that email' });
         }
+
         if (!isValidPassword(user, password)) {
             return res.status(400).send({ status: 'error', error: 'Incorrect password' });
         }
-        return res.status(200).send({ status: 'success', message: 'Login successful' });
+
+        const userWithoutPassword = { ...user.toObject() };
+        const accessToken = generateToken({
+            _id: userWithoutPassword._id,
+            name: userWithoutPassword.name,
+            email: userWithoutPassword.email,
+            alias: userWithoutPassword.alias
+        });
+
+        return res.status(200).send({ status: 'success', message: 'Login successful', token: accessToken });
     } catch (error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error', error: error.message });
     }
 }
+
 
 async function sendChangePasswordVerificationCode(req, res){
     const { email } = req.body;
@@ -64,7 +79,7 @@ async function sendChangePasswordVerificationCode(req, res){
        
         return res.status(200). send({status: "success", message: `Verification  code sent to ${email}.`})
     } catch (error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error',error: error.message});
     }
 }
 
@@ -81,7 +96,7 @@ async function verifyChangePasswordVerificationCode(req, res){
 
         return res.status(200). send({status: "success", message: 'Verification code is correct.'});
     } catch (error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error',error: error.message});
     }
 }
 
@@ -104,21 +119,21 @@ async function changePassword(req, res){
             }
         );
 
-        return res.status(200).send({ status: "success", message: "Password updated successfully.", payload: result });
+        return res.status(200).send({ status: "success", message: "Password updated successfully."});
 
     } catch (error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error',error: error.message});
     }
 } 
 
 async function getUser(req, res) {
     const { uid } = req.params;
     try{
-        const user = await usersModel.findOne({ _id: uid });
+        const user = await usersModel.findOne({ _id: uid }).select('-password');
         if (!user) return res.status(400).send({ status: "error", error: "There isn't any user with that id." });
         return res.status(200).send({ status: "success", user: user });
     }catch(error) {
-        return res.status(500).send({ status: 'error', error: error });
+        return res.status(500).send({ status: 'error',error: error.message});
     }
 }
 

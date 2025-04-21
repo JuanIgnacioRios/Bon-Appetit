@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const recipiesCollection = "recipies";
 
 const recipiesSchema = new mongoose.Schema({
-    name: String,
+    title: String,
     description: String,
     category: String,
     portions: Number,
@@ -12,7 +12,7 @@ const recipiesSchema = new mongoose.Schema({
     user: String,
     publishedDate: Date,
     stepsList: Array,
-    averageRating: Float32Array,
+    averageRating: Number,
     rating: Array,
     aditionalMedia: Array,
     isVerificated: Boolean
