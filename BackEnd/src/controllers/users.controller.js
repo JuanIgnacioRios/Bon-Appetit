@@ -1,4 +1,4 @@
-import { createHash, isValidPassword, generateToken } from '../../utils.js'
+import { createHash, isValidPassword, generateToken, transport } from '../../utils.js'
 import usersModel from '../dao/users.model.js'
 
 async function register(req, res) {
@@ -72,10 +72,22 @@ async function sendChangePasswordVerificationCode(req, res){
           );
           
 
-        //----------
-        // Enviar email con codigo
-        // Puede retornar que no se pudo enviar el email
-        //----------
+          let emailresponse = await transport.sendMail({
+            from: "bonappetittpo@gmail.com",
+            to: email,
+            subject: "BonAppetit | Reestrablece tu contraseña",
+            html:`
+           <p>¡Hola! ¿Cómo estás?</p>
+
+            <p>Recibimos una solicitud para restablecer tu contraseña. Ingresá el siguiente código en la aplicación para continuar:</p>
+
+            <h2 style="letter-spacing: 2px;">${verificationCode}</h2>
+
+            <p>Por tu seguridad, no compartas este código con nadie.</p>
+
+            <p>Gracias por confiar en <b>BonAppetit</b>.</p>
+            `
+          })
        
         return res.status(200). send({status: "success", message: `Verification  code sent to ${email}.`})
     } catch (error) {

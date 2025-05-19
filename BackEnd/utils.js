@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import config from './config.js'
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer'
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
@@ -37,3 +38,13 @@ export const adminOnly = (req, res, next) => {
 
     next();
 };
+
+
+export const transport = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    auth:{
+        user: "bonappetittpo@gmail.com",
+        pass: config.googlepassword
+    }
+})
