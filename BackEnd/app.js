@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose';
 import config from './config.js'
+import cors from 'cors'
 
 import userRouter from './src/routes/users.router.js';
 import recipiesRouter from './src/routes/recipies.router.js';
@@ -14,6 +15,7 @@ const app = express();
 const PORT = config.port
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/api/users', userRouter)
 app.use('/api/recipies', recipiesRouter)
