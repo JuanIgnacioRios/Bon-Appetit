@@ -80,8 +80,9 @@ async function getRecipies(req, res) {
         }
 
         if (user) {
-            query.user = user; //No tiene que ser identico
-        }
+            query.user = { $regex: user, $options: "i" };
+          }
+          
 
         if (category) {
             query.category = category;
