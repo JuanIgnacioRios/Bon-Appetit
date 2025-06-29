@@ -152,6 +152,7 @@ async function getUser(req, res) {
 
 async function getSession( req, res) {
     res.status(200).send({ status: "success", user: {
+        _id: req.user._id,
         name: req.user.name,
         email: req.user.email,
         alias: req.user.alias,
