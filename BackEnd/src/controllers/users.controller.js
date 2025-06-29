@@ -1,3 +1,4 @@
+//src/controllers/users.controller.js
 import { createHash, isValidPassword, generateToken, transport } from '../../utils.js'
 import usersModel from '../dao/users.model.js'
 
@@ -81,23 +82,18 @@ async function sendChangePasswordVerificationCode(req, res) {
             }
         );
 
-        // ENVÍO DE MAIL EN FORMATO HTML SIMPLE
-        await transport.sendMail({
-            from: `"BonAppetit TPO" <bonappetittpo@gmail.com>`, // Asegurate que sea el mismo que usás en auth.user
-            to: email,
-            subject: "Tu código para BonAppetit",
-            html: `
-                <div style="font-family: Arial, sans-serif; color: #333;">
-                    <p>Hola,</p>
-                    <p>Tu código de verificación para recuperar tu contraseña en <b>BonAppetit</b> es:</p>
-                    <div style="text-align: center; margin: 24px 0;">
-                        <span style="font-size: 32px; letter-spacing: 4px; font-weight: bold; color: #055B49;">${verificationCode}</span>
-                    </div>
-                    <p style="font-size: 13px; color: #777;">Si no pediste este código, por favor ignorá este mensaje.</p>
-                    <p style="margin-top: 32px;">¡Gracias!</p>
-                </div>
-            `
-        });
+        let emailresponse = await transport.sendMail({
+        from: "bonappetittpo@gmail.com", 
+        to: email,
+        subject: "BonAppetit | Restablece tu contraseña",
+        html: `
+            <p>¡Hola! ¿Cómo estás?</p>
+            <p>Recibimos una solicitud para restablecer tu contraseña. Ingresá el siguiente código en la aplicación para continuar:</p>
+            <h2 style="letter-spacing: 2px;">${verificationCode}</h2>
+            <p>Por tu seguridad, no compartas este código con nadie.</p>
+            <p>Gracias por confiar en <b>BonAppetit</b>.</p>
+        `
+    });
 
         return res.status(200).send({
             status: "success",
