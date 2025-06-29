@@ -9,7 +9,8 @@ import favoutitesRouter from './src/routes/favourites.router.js'
 import categoriesRouter from './src/routes/categories.router.js'
 import ingredientsRouter from './src/routes/ingredients.router.js'
 import adminRouter from './src/routes/admin.router.js'
-import { adminOnly } from './utils.js';
+import { adminOnly, authToken } from './utils.js';
+import usersController from './src/controllers/users.controller.js';
 
 const app = express();
 const PORT = config.port
@@ -23,6 +24,7 @@ app.use('/api/favourite-recipies', favoutitesRouter)
 app.use('/api/categories', categoriesRouter)
 app.use('/api/ingredients', ingredientsRouter)
 app.use('/api/admin', adminOnly, adminRouter)
+app.get('/api/session', authToken, usersController.getSession)
 
 
 mongoose.connect(config.mongourl)

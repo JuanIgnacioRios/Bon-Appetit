@@ -23,7 +23,7 @@ export const authToken = (req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     jwt.verify(token, config.jwtSignature, (error, credentials) => {
-        if (error) return res.status(403).send({ error: "No Autorizado" })
+        if (error || credentials.role == "guest") return res.status(403).send({ error: "No Autorizado" })
         req.user = credentials;
         next();
     })

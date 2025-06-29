@@ -155,6 +155,8 @@ async function updateRecipie(req, res) {
         return res.status(400).send({ status: "error", error: "No valid fields provided to update." });
     }
 
+    updateFields.isVerificated = false;
+
     try {
         const recipie = await recipiesModel.findById(id);
         if (!recipie) return res.status(404).send({ status: "error", error: "Recipie not found" });
