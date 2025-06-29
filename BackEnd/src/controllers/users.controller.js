@@ -53,43 +53,64 @@ async function login(req, res) {
 }
 
 
-async function sendChangePasswordVerificationCode(req, res){
+async function sendChangePasswordVerificationCode(req, res) {
     const { email } = req.body;
-    if( !email ) return res.status(400).send({status: "error", error: "An email address is required to send the password change verification code."});
+    if (!email)
+        return res.status(400).send({
+            status: "error",
+            error: "An email address is required to send the password change verification code."
+        });
+
     try {
         const exist = await usersModel.findOne({ email });
-        if (!exist) return res.status(400).send({ status: "error", error: "There isn't any user registered with that email."});
+        if (!exist)
+            return res.status(400).send({
+                status: "error",
+                error: "There isn't any user registered with that email."
+            });
 
         const verificationCode = Math.floor(100000 + Math.random() * 900000);
 
-
-        await usersModel.updateOne({ email },
+        await usersModel.updateOne(
+            { email },
             {
-              $set: {
-                resetCode: verificationCode,
-                resetCodeExpires: Date.now() + 10 * 60 * 1000,
-              },
+                $set: {
+                    resetCode: verificationCode,
+                    resetCodeExpires: Date.now() + 10 * 60 * 1000,
+                },
             }
-          );
-          
+        );
 
-          let emailresponse = await transport.sendMail({
-            from: '"BonAppetit TPO" <bonappetittpo@gmail.com>', // así de simple y real
+        // ENVÍO DE MAIL EN FORMATO HTML SIMPLE
+        await transport.sendMail({
+            from: `"BonAppetit TPO" <bonappetittpo@gmail.com>`, // Asegurate que sea el mismo que usás en auth.user
             to: email,
-            subject: "Tu código para BonAppetit", // más informal, no pone “restablecer” ni “contraseña”
+            subject: "Tu código para BonAppetit",
             html: `
-                <p>Hola,</p>
-                <p>Tu código de verificación es:</p>
-                <h2>${verificationCode}</h2>
-                <p>Si no lo pediste, ignorá este mensaje.</p>
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <p>Hola,</p>
+                    <p>Tu código de verificación para recuperar tu contraseña en <b>BonAppetit</b> es:</p>
+                    <div style="text-align: center; margin: 24px 0;">
+                        <span style="font-size: 32px; letter-spacing: 4px; font-weight: bold; color: #055B49;">${verificationCode}</span>
+                    </div>
+                    <p style="font-size: 13px; color: #777;">Si no pediste este código, por favor ignorá este mensaje.</p>
+                    <p style="margin-top: 32px;">¡Gracias!</p>
+                </div>
             `
-            })
-       
-        return res.status(200). send({status: "success", message: `Verification  code sent to ${email}.`})
+        });
+
+        return res.status(200).send({
+            status: "success",
+            message: `Verification code sent to ${email}.`
+        });
     } catch (error) {
-        return res.status(500).send({ status: 'error',error: error.message});
+        return res.status(500).send({
+            status: 'error',
+            error: error.message
+        });
     }
 }
+
 
 async function verifyChangePasswordVerificationCode(req, res){
     const { verificationCode, email } = req.body;

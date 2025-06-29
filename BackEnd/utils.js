@@ -41,10 +41,9 @@ export const adminOnly = (req, res, next) => {
 
 
 export const transport = nodemailer.createTransport({
-    service: "gmail",
-    port: 587,
-    auth:{
-        user: "bonappetittpo@gmail.com",
-        pass: config.googlepassword
+    service: 'gmail',
+    auth: {
+        user: process.env.MAIL_USER, // Ej: bonappetittpo@gmail.com
+        pass: process.env.MAIL_PASS  // Contraseña de aplicación
     }
-})
+});
