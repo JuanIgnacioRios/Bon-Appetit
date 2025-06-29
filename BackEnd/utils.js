@@ -1,7 +1,13 @@
+//utils.js
 import bcrypt from 'bcrypt'
 import config from './config.js'
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from 'nodemailer'
+
+
+
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
@@ -58,10 +64,14 @@ export const adminOnly = (req, res, next) => {
 };
 
 
+// DEBUG: chequea si se cargan las variables
+console.log("MAIL_USER:", `"${process.env.MAIL_USER}"`);
+console.log("MAIL_PASS:", process.env.MAIL_PASS ? "OK" : "FALTA");
+
+// TRANSPORTER: 100% limpio, sin nada raro
 export const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.MAIL_USER, // Ej: bonappetittpo@gmail.com
-        pass: process.env.MAIL_PASS  // Contraseña de aplicación
-    }
+        user: 'bonappetittpo@gmail.com',
+        pass: 'ugiz iubk sbtx sfvn'}
 });
