@@ -1,3 +1,4 @@
+//utils.js
 import bcrypt from 'bcrypt'
 import config from './config.js'
 import jwt from 'jsonwebtoken';
@@ -66,7 +67,7 @@ export const adminOnly = (req, res, next) => {
 export const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.MAIL_USER, // Ej: bonappetittpo@gmail.com
-        pass: process.env.MAIL_PASS  // Contraseña de aplicación
+        user: "bonappetittpo@gmail.com",
+        pass: "ugiz iubk sbtx sfvn"
     }
 });
