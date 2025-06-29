@@ -46,6 +46,7 @@ async function getRecipies(req, res) {
             category,
             contains,
             notContains,
+            isVerificated,
             limit = 10,
             sortBy = "title",
             order = "asc"
@@ -81,11 +82,17 @@ async function getRecipies(req, res) {
 
         if (user) {
             query.user = { $regex: user, $options: "i" };
-          }
-          
+        }
 
         if (category) {
             query.category = category;
+        }
+
+        if (isVerificated !== undefined) {
+            if (isVerificated !== 'true' && isVerificated !== 'false') {
+                return res.status(400).send({ status: "error", error: "'isVerificated' debe ser 'true' o 'false'" });
+            }
+            query.isVerificated = isVerificated === 'true';
         }
 
         if (contains) {
@@ -126,6 +133,7 @@ async function getRecipies(req, res) {
         return res.status(500).send({ status: "error", error: error.message });
     }
 }
+
 
 
 async function getRecipie(req, res) {
