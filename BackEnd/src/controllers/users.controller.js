@@ -73,21 +73,16 @@ async function sendChangePasswordVerificationCode(req, res){
           
 
           let emailresponse = await transport.sendMail({
-            from: "bonappetittpo@gmail.com",
+            from: '"BonAppetit TPO" <bonappetittpo@gmail.com>', // así de simple y real
             to: email,
-            subject: "BonAppetit | Reestrablece tu contraseña",
-            html:`
-           <p>¡Hola! ¿Cómo estás?</p>
-
-            <p>Recibimos una solicitud para restablecer tu contraseña. Ingresá el siguiente código en la aplicación para continuar:</p>
-
-            <h2 style="letter-spacing: 2px;">${verificationCode}</h2>
-
-            <p>Por tu seguridad, no compartas este código con nadie.</p>
-
-            <p>Gracias por confiar en <b>BonAppetit</b>.</p>
+            subject: "Tu código para BonAppetit", // más informal, no pone “restablecer” ni “contraseña”
+            html: `
+                <p>Hola,</p>
+                <p>Tu código de verificación es:</p>
+                <h2>${verificationCode}</h2>
+                <p>Si no lo pediste, ignorá este mensaje.</p>
             `
-          })
+            })
        
         return res.status(200). send({status: "success", message: `Verification  code sent to ${email}.`})
     } catch (error) {
