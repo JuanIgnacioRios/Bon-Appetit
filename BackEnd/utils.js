@@ -64,10 +64,15 @@ export const adminOnly = (req, res, next) => {
 };
 
 
+// DEBUG: chequea si se cargan las variables
+console.log("MAIL_USER:", `"${process.env.MAIL_USER}"`);
+console.log("MAIL_PASS:", process.env.MAIL_PASS ? "OK" : "FALTA");
+
+// TRANSPORTER: 100% limpio, sin nada raro
 export const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: "bonappetittpo@gmail.com",
-        pass: "ugiz iubk sbtx sfvn"
+        user: process.env.MAIL_USER, // debe ser igual al MAIL_USER del .env
+        pass: process.env.MAIL_PASS  // contraseña de aplicación
     }
 });
