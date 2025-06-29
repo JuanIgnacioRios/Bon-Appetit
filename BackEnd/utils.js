@@ -1,7 +1,12 @@
 import bcrypt from 'bcrypt'
 import config from './config.js'
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from 'nodemailer'
+
+
+
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10))
 export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password)
