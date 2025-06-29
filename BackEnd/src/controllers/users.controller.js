@@ -42,7 +42,8 @@ async function login(req, res) {
             _id: userWithoutPassword._id,
             name: userWithoutPassword.name,
             email: userWithoutPassword.email,
-            alias: userWithoutPassword.alias
+            alias: userWithoutPassword.alias,
+            role: "user"
         });
 
         return res.status(200).send({ status: 'success', message: 'Login successful', token: accessToken });
@@ -144,6 +145,23 @@ async function getUser(req, res) {
     }
 }
 
+async function getSession( req, res) {
+    res.status(200).send({ status: "success", user: {
+        _id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        alias: req.user.alias,
+        role: req.user.role
+    }})
+}
+
+async function guest(req, res) {
+    const accessToken = generateToken({
+       role: "guest"
+    });
+    return res.status(200).send({ status: 'success', message: 'Login successful', token: accessToken });
+}
+
 
 
 export default {
@@ -152,5 +170,7 @@ export default {
     sendChangePasswordVerificationCode,
     verifyChangePasswordVerificationCode,
     changePassword,
-    getUser
+    getUser,
+    getSession,
+    guest
 }

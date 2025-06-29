@@ -80,8 +80,9 @@ async function getRecipies(req, res) {
         }
 
         if (user) {
-            query.user = user; //No tiene que ser identico
-        }
+            query.user = { $regex: user, $options: "i" };
+          }
+          
 
         if (category) {
             query.category = category;
@@ -153,6 +154,8 @@ async function updateRecipie(req, res) {
     if (Object.keys(updateFields).length === 0) {
         return res.status(400).send({ status: "error", error: "No valid fields provided to update." });
     }
+
+    updateFields.isVerificated = false;
 
     try {
         const recipie = await recipiesModel.findById(id);
