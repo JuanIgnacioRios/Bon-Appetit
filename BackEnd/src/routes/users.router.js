@@ -9,6 +9,5 @@ router.post('/send-password-change-verification-code', usersController.sendChang
 router.post('/verify-password-change-verification-code', usersController.verifyChangePasswordVerificationCode)
 router.post('/change-password', usersController.changePassword)
 router.get('/:uid', usersController.getUser)
-router.post('/guest', usersController.guest)
 
 export default router

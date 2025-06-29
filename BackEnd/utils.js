@@ -29,6 +29,24 @@ export const authToken = (req, res, next) => {
     })
 }
 
+export const session = (req, res, next) => {
+    let authHeader = req.headers.authorization;
+    /*
+    if (!authHeader) {
+        authHeader = req.cookies.jwt
+    } 
+    */
+    if (!authHeader) {
+        return res.status(401).send({ error: "No autenticado" })
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, config.jwtSignature, (error, credentials) => {
+        if (error) return res.status(403).send({ error: "No Autorizado" })
+        req.user = credentials;
+        next();
+    })
+}
+
 export const adminOnly = (req, res, next) => {
     const adminPassword = req.headers['adminpassword'];
 
