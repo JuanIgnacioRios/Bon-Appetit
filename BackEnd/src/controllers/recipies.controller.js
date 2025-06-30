@@ -20,9 +20,9 @@ async function createRecipie(req, res) {
       });
     }
 
-    const parsedIngredients = JSON.parse(ingredients || '[]');
-    const parsedStepsList = JSON.parse(stepsList || '[]');
-    const parsedAditionalMedia = JSON.parse(aditionalMedia || '[]');
+    const parsedIngredients = ingredients || '[]';
+    const parsedStepsList = stepsList || '[]';
+    const parsedAditionalMedia = aditionalMedia || '[]';
 
     const image_url = req.file?.path || "";
     console.log('📎 Imagen subida:', req.file);
