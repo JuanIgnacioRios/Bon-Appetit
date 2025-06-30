@@ -2,41 +2,62 @@ import { v4 as uuidv4 } from 'uuid';
 import recipiesModel from '../dao/recipies.model.js'
 
 async function createRecipie(req, res) {
+  try {
     const {
-        title,
-        description,
-        category,
-        portions,
-        image_url,
-        ingredients,
-        stepsList,
-        aditionalMedia,
+      title,
+      description,
+      category,
+      portions,
+      ingredients,
+      stepsList,
+      aditionalMedia,
     } = req.body;
-    if (!title || !category || !portions || !ingredients || !stepsList) return res.status(400).send({ status: "error", error: "A Title, category, portions, ingredients and steplists are required to create a recipie." });
+
+    if (!title || !category || !portions || !ingredients || !stepsList) {
+      return res.status(400).send({
+        status: "error",
+        error: "A Title, category, portions, ingredients and stepsList are required.",
+      });
+    }
+
+    const parsedIngredients = JSON.parse(ingredients || '[]');
+    const parsedStepsList = JSON.parse(stepsList || '[]');
+    const parsedAditionalMedia = JSON.parse(aditionalMedia || '[]');
+
+    const image_url = req.file?.path || "";
+    console.log('📎 Imagen subida:', req.file);
 
     const newRecipie = {
-        title,
-        description: description || "",
-        category,
-        portions,
-        user: req.user.alias,
-        image_url: image_url || "",
-        ingredients,
-        stepsList,
-        aditionalMedia: aditionalMedia || [],
-        publishedDate: Date.now(),
-        averageRating: 0,
-        rating: [],
-        isVerificated: false
-    }
+      title,
+      description: description || "",
+      category,
+      portions,
+      user: req.user.alias,
+      image_url,
+      ingredients: parsedIngredients,
+      stepsList: parsedStepsList,
+      aditionalMedia: parsedAditionalMedia,
+      publishedDate: Date.now(),
+      averageRating: 0,
+      rating: [],
+      isVerificated: false
+    };
 
-    try {
-        let result = await recipiesModel.create(newRecipie);
-        return res.status(200).send({ status: "success", message: "Recipie created successfully", payload: result });
-    } catch (error) {
-        return res.status(500).send({ status: 'error',error: error.message});
-    }
+    const result = await recipiesModel.create(newRecipie);
+    return res.status(200).send({
+      status: "success",
+      message: "Recipie created successfully",
+      payload: result,
+    });
+
+  } catch (error) {
+    return res.status(500).send({
+      status: 'error',
+      error: error.message
+    });
+  }
 }
+
 
 async function getRecipies(req, res) {
     try {
