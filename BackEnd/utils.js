@@ -68,5 +68,8 @@ export const transport = nodemailer.createTransport({
     auth:{
         user: "bonappetittpo@gmail.com",
         pass: config.googlepassword
+    },
+    tls:{
+        rejectUnauthorized: false,
     }
 })
