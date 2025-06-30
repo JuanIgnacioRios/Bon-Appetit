@@ -304,12 +304,12 @@ async function validateRating(req, res) {
         }
 
         const ratingIndex = recipie.rating.findIndex(r => r.id === ratingId);
-
         if (ratingIndex === -1) {
             return res.status(404).send({ status: "error", error: "Rating not found." });
         }
 
         recipie.rating[ratingIndex].isCommentVerified = true;
+        recipie.markModified('rating');
 
         await recipie.save();
 
