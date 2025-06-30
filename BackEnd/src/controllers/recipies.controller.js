@@ -68,7 +68,7 @@ async function getRecipies(req, res) {
             contains,
             notContains,
             isVerificated,
-            limit = 10,
+            limit = 100,
             sortBy = "title",
             order = "asc"
         } = req.query;
