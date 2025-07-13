@@ -1,12 +1,11 @@
 import express from 'express'
 import recipiesController from '../controllers/recipies.controller.js'
 import { authToken, adminOnly } from '../../utils.js';
-import upload from '../middleware/upload.js';
-
+import { uploader } from '../middleware/multer.js';
 
 const router = express.Router();
 
-router.post('/', authToken, upload.single('image'), recipiesController.createRecipie);
+router.post('/', authToken, uploader.single('image'), recipiesController.createRecipie);
 router.get('/', recipiesController.getRecipies);
 router.get('/:rid', recipiesController.getRecipie);
 router.put('/:rid', authToken, recipiesController.updateRecipie);

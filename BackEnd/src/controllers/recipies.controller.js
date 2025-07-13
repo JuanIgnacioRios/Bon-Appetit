@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import recipiesModel from '../dao/recipies.model.js'
+import cloudinary from '../../config/cloudinary.js';
 
 async function createRecipie(req, res) {
   try {
@@ -24,9 +25,22 @@ async function createRecipie(req, res) {
     const parsedStepsList = stepsList || '[]';
     const parsedAditionalMedia = aditionalMedia || '[]';
 
-    const image_url = req.file?.path || "";
-    console.log('📎 Imagen subida:', req.file);
+    let image_url = "";
 
+    if (req.file) {
+        try {
+            const result = await cloudinary.uploader.upload(req.file.path);
+            image_url = result.secure_url;
+        } catch (err) {
+            return res.status(500).send({
+            status: "error",
+            error: err.message
+            });
+        }
+    }
+
+
+    
     const newRecipie = {
       title,
       description: description || "",
