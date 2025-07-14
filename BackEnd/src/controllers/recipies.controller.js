@@ -3,73 +3,61 @@ import recipiesModel from '../dao/recipies.model.js'
 import cloudinary from '../../config/cloudinary.js';
 
 async function createRecipie(req, res) {
-  try {
-    const {
-      title,
-      description,
-      category,
-      portions,
-      ingredients,
-      stepsList,
-      aditionalMedia,
-    } = req.body;
+    try {
+        const {
+            title,
+            description,
+            category,
+            portions,
+            ingredients,
+            stepsList,
+            aditionalMedia,
+            image_url
+        } = req.body;
 
-    if (!title || !category || !portions || !ingredients || !stepsList) {
-      return res.status(400).send({
-        status: "error",
-        error: "A Title, category, portions, ingredients and stepsList are required.",
-      });
-    }
 
-    const parsedIngredients = ingredients || '[]';
-    const parsedStepsList = stepsList || '[]';
-    const parsedAditionalMedia = aditionalMedia || '[]';
-
-    let image_url = "";
-
-    if (req.file) {
-        try {
-            const result = await cloudinary.uploader.upload(req.file.path);
-            image_url = result.secure_url;
-        } catch (err) {
-            return res.status(500).send({
-            status: "error",
-            error: err.message
+        if (!title || !category || !portions || !ingredients || !stepsList) {
+            return res.status(400).send({
+                status: "error",
+                error: "A Title, category, portions, ingredients and stepsList are required.",
             });
         }
+
+        const parsedIngredients = ingredients || '[]';
+        const parsedStepsList = stepsList || '[]';
+        const parsedAditionalMedia = aditionalMedia || '[]';
+
+
+
+        const newRecipie = {
+            title,
+            description: description || "",
+            category,
+            portions,
+            user: req.user.alias,
+            image_url,
+            ingredients: parsedIngredients,
+            stepsList: parsedStepsList,
+            aditionalMedia: parsedAditionalMedia,
+            publishedDate: Date.now(),
+            averageRating: 0,
+            rating: [],
+            isVerificated: false
+        };
+
+        const result = await recipiesModel.create(newRecipie);
+        return res.status(200).send({
+            status: "success",
+            message: "Recipie created successfully",
+            payload: result,
+        });
+
+    } catch (error) {
+        return res.status(500).send({
+            status: 'error',
+            error: error.message
+        });
     }
-
-
-    
-    const newRecipie = {
-      title,
-      description: description || "",
-      category,
-      portions,
-      user: req.user.alias,
-      image_url,
-      ingredients: parsedIngredients,
-      stepsList: parsedStepsList,
-      aditionalMedia: parsedAditionalMedia,
-      publishedDate: Date.now(),
-      averageRating: 0,
-      rating: [],
-      isVerificated: false
-    };
-
-    const result = await recipiesModel.create(newRecipie);
-    return res.status(200).send({
-      status: "success",
-      message: "Recipie created successfully",
-      payload: result,
-    });
-
-  } catch (error) {
-    return res.status(500).send({
-      status: 'error',
-      error: error.message
-    });
-  }
 }
 
 
@@ -184,7 +172,7 @@ async function getRecipie(req, res) {
 }
 
 async function updateRecipie(req, res) {
-    const id  = req.params.rid;
+    const id = req.params.rid;
 
     if (!id) return res.status(400).send({ status: "error", error: "Missing recipe ID" });
 
@@ -224,8 +212,8 @@ async function verificateRecipie(req, res) {
         const recipieId = req.params.rid;
         if (!recipieId) return res.status(400).send({ status: "error", error: "No recipie ID provided." });
         await recipiesModel.updateOne(
-            {_id: recipieId},
-            {$set: {isVerificated: true}}
+            { _id: recipieId },
+            { $set: { isVerificated: true } }
         )
 
         return res.status(200).send({ status: "success", message: "Recipie verificated." })

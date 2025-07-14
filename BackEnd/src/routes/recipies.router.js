@@ -5,7 +5,7 @@ import { uploader } from '../middleware/multer.js';
 
 const router = express.Router();
 
-router.post('/', authToken, uploader.single('image'), recipiesController.createRecipie);
+router.post('/', authToken, recipiesController.createRecipie);
 router.get('/', recipiesController.getRecipies);
 router.get('/:rid', recipiesController.getRecipie);
 router.put('/:rid', authToken, recipiesController.updateRecipie);
