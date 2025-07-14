@@ -1,7 +1,6 @@
 import express from 'express'
 import recipiesController from '../controllers/recipies.controller.js'
 import { authToken, adminOnly } from '../../utils.js';
-import { uploader } from '../middleware/multer.js';
 
 const router = express.Router();
 
