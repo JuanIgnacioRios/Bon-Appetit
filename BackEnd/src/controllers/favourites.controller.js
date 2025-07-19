@@ -35,9 +35,12 @@ async function getFavouriteRecipies(req, res) {
         }
 
         const recipes = await recipiesModel.find(
-            { _id: { $in: user.favouriteRecipes } },
-            { title: 1, user: 1, image_url: 1, publishedDate: 1, averageRating: 1, category: 1 }
-        );
+            { 
+                _id: { $in: user.favouriteRecipes },
+                isVerificated: true
+            },
+                { title: 1, user: 1, image_url: 1, publishedDate: 1, averageRating: 1, category: 1 }
+            );
 
         return res.status(200).send({ status: "success", recipes });
         
